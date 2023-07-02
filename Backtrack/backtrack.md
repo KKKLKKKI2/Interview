@@ -3,6 +3,9 @@
 1. Recursion is backtrack
 2. Permutation has order, combination doesn't have order. 
 
+Big O:
+[link](https://github.com/youngyangyang04/leetcode-master/blob/master/problems/%E5%91%A8%E6%80%BB%E7%BB%93/20201112%E5%9B%9E%E6%BA%AF%E5%91%A8%E6%9C%AB%E6%80%BB%E7%BB%93.md)
+
 # 77. Combinations
 
 ## No trimming
@@ -23,7 +26,7 @@
             backtracking(n, k, i + 1);
             path.pop_back();
         }
-        return;
+        return
     }
     vector<vector<int>> combine(int n, int k)
     {
@@ -156,3 +159,4 @@
         return result;
     }
 ```
+
