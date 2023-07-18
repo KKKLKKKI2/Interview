@@ -191,3 +191,147 @@ public:
         return result;
     }
 ```
+
+# 332. Reconstruct Itinerary
+1. unordered_map<string, map<string,int>> save("from","to","times)
+2. backtracking function needs return boolean for checking the result.size() == ticketNum+1?
+
+```cpp
+    unordered_map<string, map<string, int>> targets;
+    bool backtracking(int ticketNum, vector<string> &result)
+    {
+        if (result.size() == ticketNum + 1)
+        {
+            return true;
+        }
+        for (pair<const string, int> &target : targets[result[result.size() - 1]])
+        {
+            if (target.second > 0)
+            {
+                target.second--;
+                result.push_back(target.first);
+                if (backtracking(ticketNum, result))
+                    return true;
+                result.pop_back();
+                target.second++;
+            }
+        }
+        return false;
+    }
+    vector<string> findItinerary(vector<vector<string>> &tickets)
+    {
+        vector<string> result;
+        result.clear();
+        targets.clear();
+        for (vector<string> &vec : tickets)
+        {
+            targets[vec[0]][vec[1]]++;
+        }
+        result.push_back("JFK");
+        backtracking(tickets.size(), result);
+        return result;
+    }
+```
+
+# 51. N-Queens
+1. every row, col, and diagonal should not have two queens
+2. when n == row, push one condition of chessboard to result
+
+
+```cpp
+    vector<vector<string>> result;
+    void backtracking(int n, int row, vector<string> &chessboard)
+    {
+        if (row == n)
+        {
+            result.push_back(chessboard);
+            return;
+        }
+        for (int col = 0; col < n; col++)
+        {
+            if (isValid(row, col, chessboard, n))
+            {
+                chessboard[row][col] = 'Q';
+                backtracking(n, row + 1, chessboard);
+                chessboard[row][col] = '.';
+            }
+        }
+    }
+    bool isValid(int row, int col, vector<string> &chessboard, int n)
+    {
+        for (int j = row; j >= 0; j--)
+        {
+            if (chessboard[j][col] == 'Q')
+                return false;
+        }
+        for (int j = row - 1, i = col + 1; j >= 0 && i < n; j--, i++)
+        {
+            if (chessboard[j][i] == 'Q')
+                return false;
+        }
+        for (int j = row - 1, i = col - 1; j >= 0 && i >= 0; i--, j--)
+        {
+            if (chessboard[j][i] == 'Q')
+                return false;
+        }
+        return true;
+    }
+    vector<vector<string>> solveNQueens(int n)
+    {
+        result.clear();
+        vector<string> chessboard(n, string(n, '.'));
+        backtracking(n, 0, chessboard);
+        return result;
+    }
+```
+
+# 37. Sudoku Solver
+
+```cpp
+class Solution {
+private:
+bool backtracking(vector<vector<char>>& board) {
+    for (int i = 0; i < board.size(); i++) {        // 遍历行
+        for (int j = 0; j < board[0].size(); j++) { // 遍历列
+            if (board[i][j] == '.') {
+                for (char k = '1'; k <= '9'; k++) {     // (i, j) 这个位置放k是否合适
+                    if (isValid(i, j, k, board)) {
+                        board[i][j] = k;                // 放置k
+                        if (backtracking(board)) return true; // 如果找到合适一组立刻返回
+                        board[i][j] = '.';              // 回溯，撤销k
+                    }
+                }
+                return false;  // 9个数都试完了，都不行，那么就返回false
+            }
+        }
+    }
+    return true; // 遍历完没有返回false，说明找到了合适棋盘位置了
+}
+bool isValid(int row, int col, char val, vector<vector<char>>& board) {
+    for (int i = 0; i < 9; i++) { // 判断行里是否重复
+        if (board[row][i] == val) {
+            return false;
+        }
+    }
+    for (int j = 0; j < 9; j++) { // 判断列里是否重复
+        if (board[j][col] == val) {
+            return false;
+        }
+    }
+    int startRow = (row / 3) * 3;
+    int startCol = (col / 3) * 3;
+    for (int i = startRow; i < startRow + 3; i++) { // 判断9方格里是否重复
+        for (int j = startCol; j < startCol + 3; j++) {
+            if (board[i][j] == val ) {
+                return false;
+            }
+        }
+    }
+    return true;
+}
+public:
+    void solveSudoku(vector<vector<char>>& board) {
+        backtracking(board);
+    }
+};
+```
