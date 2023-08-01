@@ -11,16 +11,45 @@ for(int i = 0; i< nums.size();i++
 	}
 }
 ```
+## 轉移函式
+1. 01背包求最大能裝多少
 
-2. 求組合沒有排列
+```cpp
+dp[j] = max(dp[j], dp[j - nums[i]] + nums[i]); 
+```
+
+2. 求有幾種組合/排列
 
 ```cpp
 dp[j] += dp[j - nums[i]];
 ```
 
+3. 求背包容量內物品使用數量最少的狀況 
+
+```cpp
+ dp[j] = min(dp[j - coins[i]] + 1, dp[j]);
+```
+
+## 遍歷方式
+
+1. 物品在外迴圈，背包容量在內迴圈，求的是組合
+
+```cpp
+for(int i = nums.size();i<0;i++)
+	for(int j = nums[i]; j <back.size();j++)
+```
+
+2. 背包容量在外迴圈，物品在內迴圈，求的是組合
+
+```cpp
+for(int j = nums[i]; j <back.size();j++)
+	for(int i = nums.size();i<0;i++)
+
+```
+
 # Complete Backpack
 
-物品可以多次選擇，內迴圈從小到大
+物品可以多次選擇，內迴圈正序從小到大
 ```cpp
 for(int i = 0; i < weight.size(); i++) { // 遍历物品
     for(int j = weight[i]; j <= bagWeight ; j++) { // 遍历背包容量
@@ -246,4 +275,102 @@ dp[0] = 1 means 0 is one situation
 	return dp[m][n];
 ```
 
+# 518
 
+```cpp
+class Solution {
+public:
+    int change(int amount, vector<int>& coins) {
+        vector<int> dp(amount + 1, 0);
+        dp[0] = 1;
+        for (int i = 0; i < coins.size(); i++) { // 遍历物品
+            for (int j = coins[i]; j <= amount; j++) { // 遍历背包
+                dp[j] += dp[j - coins[i]];
+            }
+        }
+        return dp[amount];
+    }
+};
+```
+
+# 377
+
+```cpp
+class Solution {
+public:
+    int combinationSum4(vector<int>& nums, int target) {
+        vector<int> dp(target + 1, 0);
+        dp[0] = 1;
+        for (int i = 0; i <= target; i++) { // 遍历背包
+            for (int j = 0; j < nums.size(); j++) { // 遍历物品
+                if (i - nums[j] >= 0 && dp[i] < INT_MAX - dp[i - nums[j]]) {
+                    dp[i] += dp[i - nums[j]];
+                }
+            }
+        }
+        return dp[target];
+    }
+};
+```
+
+# 322
+
+```cpp
+class Solution {
+public:
+    int coinChange(vector<int>& coins, int amount) {
+        vector<int> dp(amount + 1, INT_MAX);
+        dp[0] = 0;
+        for (int i = 0; i < coins.size(); i++) { // 遍历物品
+            for (int j = coins[i]; j <= amount; j++) { // 遍历背包
+                if (dp[j - coins[i]] != INT_MAX) { // 如果dp[j - coins[i]]是初始值则跳过
+                    dp[j] = min(dp[j - coins[i]] + 1, dp[j]);
+                }
+            }
+        }
+        if (dp[amount] == INT_MAX) return -1;
+        return dp[amount];
+    }
+};
+```
+
+# 279
+
+```cpp
+class Solution {
+public:
+    int numSquares(int n) {
+        vector<int> dp(n + 1, INT_MAX);
+        dp[0] = 0;
+        for (int i = 1; i * i <= n; i++) { // 遍历物品
+            for (int j = i * i; j <= n; j++) { // 遍历背包
+                dp[j] = min(dp[j - i * i] + 1, dp[j]);
+            }
+        }
+        return dp[n];
+    }
+};
+```
+
+# 319
+1. 求排列外背包內物品
+
+```cpp
+class Solution {
+public:
+    bool wordBreak(string s, vector<string>& wordDict) {
+        unordered_set<string> wordSet(wordDict.begin(), wordDict.end());
+        vector<bool> dp(s.size() + 1, false);
+        dp[0] = true;
+        for (int i = 1; i <= s.size(); i++) {   // 遍历背包
+            for (int j = 0; j < i; j++) {       // 遍历物品
+                string word = s.substr(j, i - j); //substr(起始位置，截取的个数)
+                if (wordSet.find(word) != wordSet.end() && dp[j]) {
+                    dp[i] = true;
+                }
+            }
+        }
+        return dp[s.size()];
+    }
+};
+```
