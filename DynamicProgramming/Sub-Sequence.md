@@ -2,7 +2,7 @@
 - 115
 - 583
 - 712
--
+- 673
 
 # 300
 
@@ -443,4 +443,42 @@ public:
         return dp[0][s.size() - 1];
     }
 };
+```
+
+#673
+Sample to understand
+10,20,30,30,60,60,70,1,2,3,3,6,6,7
+
+Extend from #300
+
+__dp[i]__ represents nums[0:i] max increase sub sequence
+
+__count[i]__ represents sets of max sub sequence at dp[i]
+
+result counts __counts[i]__ when ```dp[i] == maxCount```
+```cpp
+    int findNumberOfLIS(vector<int>& nums) {
+	if (nums.size() <= 1) return nums.size();
+	vector<int> dp(nums.size(), 1);
+	vector<int> count(nums.size(), 1);
+	int maxCount = 0;
+	for (int i = 1; i < nums.size(); i++) {
+		for (int j = 0; j < i; j++) {
+			if (nums[i] > nums[j]) {
+				if (dp[j] + 1 > dp[i]) {
+					dp[i] = dp[j] + 1;
+					count[i] = count[j];
+				} else if (dp[j] + 1 == dp[i]) {
+					count[i] += count[j];
+				}
+			}
+			if (dp[i] > maxCount) maxCount = dp[i];
+		}
+	}
+	int result = 0;
+	for (int i = 0; i < nums.size(); i++) {
+		if (maxCount == dp[i]) result += count[i];
+	}
+	return result;
+    }
 ```

@@ -5,12 +5,13 @@
 # Key
 1. Binary search
 	1. **[Left, Right]**，左閉右閉，while(left<=right)，left = 0，right = size - 1
+		- 當(target<mid) right = mid + 1
+		- 當(target>mid) left = mid - 1
+	
 	2. **[Left, Right)**，左閉右開，while(left< right)，left = 0，right = size
+		- 當(target<mid) right = mid + 1
+		- 當(target>mid) left = mid - 1
 	
-	
-
-
-設置dummy head在head之前，修改cur表示現在的linked list到哪
 
 
 
